@@ -1,0 +1,37 @@
+version: "3.7"
+
+services:
+  go-dagangan:
+    container_name: go-dagangan
+    image: thisk8brd/go-dagangan:dev
+    build:
+      context: .
+      target: dev
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+      - "2345:2345"
+    networks:
+      - go-dagangan-network
+
+  go-dagangan-db:
+    container_name: go-dagangan-db
+    image: postgres
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    ports:
+      - "5433:5434"
+    networks:
+      - go-dagangan-network
+
+volumes:
+  postgres-db:
+
+networks:
+  go-dagangan-network:
+    name: go-dagangan-network
