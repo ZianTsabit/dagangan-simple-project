@@ -15,10 +15,10 @@ func main() {
 
     // Test handler
     api.Get("/", func(c *fiber.Ctx) error {
-        return c.SendString("App running")
+        return c.SendString("Hello, Ghazian!")
     })
 
-    log.Fatal(app.Listen(":5000"))
+    log.Fatal(app.Listen(":8000"))
 }
 
 

@@ -1,39 +1,9 @@
-FROM golang:1.18-alpine AS base
+FROM golang:1.19.0
+
 WORKDIR /app
 
-ENV GO111MODULE="on"
-ENV GOOS="linux"
-ENV CGO_ENABLED=0
+RUN go install github.com/cosmtrek/air@latest
 
-RUN apk update \
-    && apk add --no-cache \
-    ca-certificates \
-    curl \
-    tzdata \
-    git \
-    && update-ca-certificates
+COPY . .
 
-FROM base AS dev
-WORKDIR /app
-
-RUN go get -u github.com/cosmtrek/air && go install github.com/go-delve/delve/cmd/dlv@latest
-EXPOSE 5000
-EXPOSE 2345
-
-ENTRYPOINT ["air"]
-
-FROM base AS builder
-WORKDIR /app
-
-COPY . /app
-RUN go mod download \
-    && go mod verify
-
-RUN go build -o dagangan -a .
-
-FROM alpine:latest as prod
-
-COPY --from=builder /app/dagangan /usr/local/bin/dagangan
-EXPOSE 5000
-
-ENTRYPOINT ["/usr/local/bin/dagangan"]
+RUN go mod tidy

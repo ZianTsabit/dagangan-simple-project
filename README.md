@@ -1,6 +1,6 @@
 # dagangan-simple-project
 
-Simple Project For Dagangan Backend Developer Intership
+Simple Project For Dagangan Backend Developer Internship
 
 ## Description
 

@@ -1,37 +1,26 @@
-version: "3.7"
+version: "3.8"
 
 services:
-  go-dagangan:
-    container_name: go-dagangan
-    image: thisk8brd/go-dagangan:dev
-    build:
-      context: .
-      target: dev
+  dagangan-web:
+    build: .
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
     volumes:
       - .:/app
-    ports:
-      - "5000:5000"
-      - "2345:2345"
-    networks:
-      - go-dagangan-network
-
-  go-dagangan-db:
-    container_name: go-dagangan-db
-    image: postgres
+    command: air ./cmd/main.go -b 0.0.0.0
+  db:
+    image: postgres:alpine
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
-    volumes:
-      - postgres-db:/var/lib/postgresql/data
     ports:
-      - "5433:5434"
-    networks:
-      - go-dagangan-network
+      - "5434:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    restart: always
 
 volumes:
-  postgres-db:
-
-networks:
-  go-dagangan-network:
-    name: go-dagangan-network
+  db_data:
