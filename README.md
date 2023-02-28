@@ -6,6 +6,9 @@ Simple Project For Dagangan Backend Developer Internship
 
 ## Requirements
 
+1. Docker
+2. Docker Compose
+
 ## How to Run and Build?
 
 ```
