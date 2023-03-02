@@ -6,13 +6,37 @@ import (
 	"github.com/ZianTsabit/dagangan-simple-project/models"
 )
 
+// Get Products using filter and pagination
 func GetProducts(c *fiber.Ctx) error {
 	var products []models.Product
-	database.Db.Db.Find(&products)
+	sql := "SELECT * FROM products"
+
+	// Filter
+	if c.Query("filter") != "" {
+		sql += " WHERE name LIKE '%" + c.Query("filter") + "%'" + " OR price LIKE '%" + c.Query("filter") + "%'"
+	}
+
+	// Page size
+	if c.Query("page_size") != "" {
+		sql += " LIMIT " + c.Query("page_size")
+	} else {
+		sql += " LIMIT 10"
+	}
+
+	// Pagination
+	if c.Query("page") != "" {
+		sql += " OFFSET " + c.Query("page")
+	} else {
+		sql += " OFFSET 0"
+	}
+
+	// Execute query
+	database.Raw(sql).Scan(&products)
+
 	return c.JSON(
 		fiber.Map{
 			"status": "success",
-			"message": "Successfully retrieved all products",
+			"message": "Successfully retrieved products",
 			"data": products,
 		},
 	)
@@ -22,7 +46,6 @@ func GetProduct(c *fiber.Ctx) error {
 	Id := c.Params("id")
 	var product models.Product
 	database.Db.Db.Find(&product, Id)
-	// return c.JSON(product)
 	return c.JSON(
 		fiber.Map{
 			"status": "success",
