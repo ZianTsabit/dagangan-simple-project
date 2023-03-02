@@ -13,14 +13,14 @@ func GetProducts(c *fiber.Ctx) error {
 
 	// Filter
 	if c.Query("filter") != "" {
-		sql += " WHERE name LIKE '%" + c.Query("filter") + "%'" + " OR price LIKE '%" + c.Query("filter") + "%'"
+		sql += " WHERE name LIKE '%" + c.Query("filter") + "%'" + " OR price LIKE >= + c.Query("filter")"
 	}
 
 	// Page size
 	if c.Query("page_size") != "" {
 		sql += " LIMIT " + c.Query("page_size")
 	} else {
-		sql += " LIMIT 10"
+		sql += " LIMIT 5"
 	}
 
 	// Pagination
@@ -31,7 +31,7 @@ func GetProducts(c *fiber.Ctx) error {
 	}
 
 	// Execute query
-	database.Db.Db.Raw(sql).Scan(&products)
+	database.Db.D.Raw(sql).Scan(&products)
 	return c.JSON(
 		fiber.Map{
 			"status": "success",
