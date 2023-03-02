@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/ZianTsabit/dagangan-simple-project/database"
 	"github.com/ZianTsabit/dagangan-simple-project/models"
+	"strconv"
 )
 
 // Get Products using filter and pagination
@@ -11,23 +12,44 @@ func GetProducts(c *fiber.Ctx) error {
 	var products []models.Product
 	sql := "SELECT * FROM products"
 
-	// Filter
-	if c.Query("filter") != "" {
-		sql += " WHERE name LIKE '%" + c.Query("filter") + "%'" + " OR price LIKE >= " + c.Query("filter")
+	// Filter by product name
+	if c.Query("name") != "" {
+		sql += " WHERE name LIKE '%" + c.Query("name") + "%'"
+	}
+
+	// Filter by product price
+	if c.Query("price") != "" {
+		if c.Query("name") != "" {
+			sql += " AND price = " + c.Query("price")
+		} else {
+			sql += " WHERE price = " + c.Query("price")
+		}
 	}
 
 	// Page size
+	page_size := 5
 	if c.Query("page_size") != "" {
+		
 		sql += " LIMIT " + c.Query("page_size")
+		page_size, _ = strconv.Atoi(c.Query("page_size"))
+	
 	} else {
+	
 		sql += " LIMIT 5"
+	
 	}
 
 	// Pagination
-	if c.Query("page") != "" {
-		sql += " OFFSET " + c.Query("page")
+	if c.Query("page_num") != "" {
+		
+		page_num, _ := strconv.Atoi(c.Query("page_num"))
+		page := (page_num - 1) * page_size
+		sql += " OFFSET " + strconv.Itoa(page)
+	
 	} else {
+		
 		sql += " OFFSET 0"
+	
 	}
 
 	// Execute query
