@@ -13,7 +13,7 @@ func GetProducts(c *fiber.Ctx) error {
 
 	// Filter
 	if c.Query("filter") != "" {
-		sql += " WHERE name LIKE '%" + c.Query("filter") + "%'" + " OR price LIKE >= + c.Query("filter")"
+		sql += " WHERE name LIKE '%" + c.Query("filter") + "%'" + " OR price LIKE >= " + c.Query("filter")
 	}
 
 	// Page size
@@ -31,12 +31,24 @@ func GetProducts(c *fiber.Ctx) error {
 	}
 
 	// Execute query
-	database.Db.D.Raw(sql).Scan(&products)
+	database.Db.Db.Raw(sql).Scan(&products)
+	
+	//just return the products id, name, price, quantity
+	data := make([]map[string]interface{}, len(products))
+	for i, product := range products {
+		data[i] = map[string]interface{}{
+			"id": product.Id,
+			"name": product.Name,
+			"price": product.Price,
+			"quantity": product.Quantity,
+		}
+	}
+	
 	return c.JSON(
 		fiber.Map{
 			"status": "success",
 			"message": "Successfully retrieved products",
-			"data": products,
+			"data": data,
 		},
 	)
 }
