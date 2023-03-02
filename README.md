@@ -16,7 +16,7 @@ Using Go, Build a REST API for Product entity with following feature:
 2. Docker Compose
 3. PostgreSQL
 4. Go
-5. GO
+5. GORM
 
 ## How to Run and Build?
 
@@ -38,17 +38,21 @@ sudo docker-compose up --build
    }
    ```
 2. Read Product
+
    **GET** `http://localhost:8000/product`
 
    - pagination (default : page_size=5)
+
      **GET** `http://localhost:8000/product?page_size=5&page_num=1`
    - filtering
+
      **GET** `http://localhost:8000/product?name=Macbook`
 
      **GET** `http://localhost:8000/product?price=25000000`
 
      **GET** `http://localhost:8000/product?name=Macbook&price=25000000`
 3. Update Product
+
    **PUT** `http://localhost:8000/product/:id`
 
    ```shell
@@ -59,4 +63,5 @@ sudo docker-compose up --build
    }
    ```
 4. Delete Product
+
    **DELETE** `http://localhost:8000/product/:id`
