@@ -3,6 +3,8 @@ package database
 import (
 	"gorm.io/gorm"
 	"gorm.io/driver/postgres"
+	"gorm.io/gorm/logger"
+	"github.com/ZianTsabit/dagangan-simple-project/models"
 	"fmt"
 	"os"
 	"log"
@@ -16,11 +18,11 @@ var Db DbInstance
 
 func ConnectDb() {
 
-	dsn := fnt.Sprintf(
+	dsn := fmt.Sprintf(
 		"host=db user=%s password=%s dbname=%s port=5434 sslmode=disable TimeZone=Asia/Jakarta", 
 		os.Getenv("DB_USER"), 
 		os.Getenv("DB_PASSWORD"), 
-		os.Getenv("DB_NAME")
+		os.Getenv("DB_NAME"),
 	)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
@@ -38,8 +40,8 @@ func ConnectDb() {
 	log.Println("Migrating database...")
 	db.AutoMigrate(&models.Product{})
 
-	DB = DbInstance{
-		Db: db
+	Db = DbInstance{
+		Db: db,
 	}
 
 }
