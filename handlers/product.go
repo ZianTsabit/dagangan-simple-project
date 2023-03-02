@@ -31,8 +31,7 @@ func GetProducts(c *fiber.Ctx) error {
 	}
 
 	// Execute query
-	database.Raw(sql).Scan(&products)
-
+	database.Db.Db.Raw(sql).Scan(&products)
 	return c.JSON(
 		fiber.Map{
 			"status": "success",
