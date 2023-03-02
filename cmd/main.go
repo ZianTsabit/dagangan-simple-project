@@ -2,22 +2,18 @@ package main
 
 import (
     "log"
-
     "github.com/gofiber/fiber/v2"
     "github.com/gofiber/fiber/v2/middleware/cors"
+    "github.com/ZianTsabit/dagangan-simple-project/database"
 )
 
 func main() {
+    database.ConnectDb()
     app := fiber.New()
     app.Use(cors.New())
 
-    api := app.Group("/api")
-
-    // Test handler
-    api.Get("/", func(c *fiber.Ctx) error {
-        return c.SendString("Hello, Ghazian!")
-    })
-
+    setupRoutes(app)
+    
     log.Fatal(app.Listen(":8000"))
 }
 

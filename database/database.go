@@ -1,6 +1,12 @@
 package database
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"gorm.io/driver/postgres"
+	"fmt"
+	"os"
+	"log"
+)
 
 type DbInstance struct {
 	Db *gorm.DB
@@ -29,6 +35,13 @@ func ConnectDb() {
 	log.Println("Connected to database.")
 	db.Logger = logger.Default.LogMode(logger.Info)
 
+	log.Println("Migrating database...")
+	db.AutoMigrate(&models.Product{})
+
+	DB = DbInstance{
+		Db: db
+	}
 
 }
 
+	
