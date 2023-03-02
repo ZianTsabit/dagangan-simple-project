@@ -26,30 +26,24 @@ func GetProducts(c *fiber.Ctx) error {
 		}
 	}
 
+	sql += " ORDER BY id"
+
 	// Page size
 	page_size := 5
 	if c.Query("page_size") != "" {
-		
 		sql += " LIMIT " + c.Query("page_size")
 		page_size, _ = strconv.Atoi(c.Query("page_size"))
-	
 	} else {
-	
 		sql += " LIMIT 5"
-	
 	}
 
 	// Pagination
 	if c.Query("page_num") != "" {
-		
 		page_num, _ := strconv.Atoi(c.Query("page_num"))
 		page := (page_num - 1) * page_size
 		sql += " OFFSET " + strconv.Itoa(page)
-	
 	} else {
-		
 		sql += " OFFSET 0"
-	
 	}
 
 	// Execute query
@@ -110,7 +104,10 @@ func DeleteProduct(c *fiber.Ctx) error {
 	if product.Name == "" {
 		return c.Status(500).SendString("No product found with ID")
 	}
-	database.Db.Db.Delete(&product)
+
+	sql := "DELETE FROM products WHERE id = " + Id
+	database.Db.Db.Exec(sql)
+
 	return c.JSON(
 		fiber.Map{
 			"status": "success",
@@ -129,7 +126,10 @@ func UpdateProduct(c *fiber.Ctx) error {
 	if err := c.BodyParser(&product); err != nil {
 		return err
 	}
-	database.Db.Db.Save(&product)
+	newPrice := strconv.FormatFloat(product.Price, 'f', 2, 64)
+	sql := "UPDATE products SET name = '" + product.Name + "', price = " + newPrice + ", quantity = " + strconv.Itoa(product.Quantity) + " WHERE id = " + Id
+	database.Db.Db.Exec(sql)
+	
 	return c.JSON(
 		fiber.Map{
 			"status": "success",
