@@ -52,8 +52,3 @@ func UpdateProduct(c *fiber.Ctx) error {
 	database.Db.Db.Save(&product)
 	return c.JSON(product)
 }
-
-func Home(c *fiber.Ctx) error {
-	return c.SendString("Hello, World!")
-}
-
